@@ -4,9 +4,9 @@ Python library to trade on pump.fun.
 
 Updated: 12/8/2024
 
-solana Version: 0.35.0
+solana Version: 0.36.1
 
-solders Version: 0.21.0
+solders Version: 0.23.0
 
 Clone the repo, and add your Private Key (Base58 string) and RPC to the config.py.
 
