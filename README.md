@@ -2,7 +2,7 @@
 
 Python library to trade on pump.fun. 
 
-Updated: 12/8/2024
+Updated: 1/24/2025
 
 solana Version: 0.36.1
 
