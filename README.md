@@ -2,17 +2,21 @@
 
 Python library to trade on pump.fun. 
 
-Updated: 1/24/2025
+```
+pip install solana==0.36.1 solders==0.23.0
+```
 
-solana Version: 0.36.1
+Updated: 2/17/2025
 
-solders Version: 0.23.0
+
+# Instructions
 
 Clone the repo, and add your Private Key (Base58 string) and RPC to the config.py.
 
 **If you can - please support my work and donate to: 3pPK76GL5ChVFBHND54UfBMtg36Bsh1mzbQPTbcK89PD**
 
-### Contact
+
+# Contact
 
 My services are for **hire**. Contact me if you need help integrating the code into your own project. 
 
@@ -30,7 +34,8 @@ I am not your personal tech support. READ THE FAQS BEFORE CONTACTING ME.
 
 Telegram: @AL_THE_BOT_FATHER
 
-### FAQS
+
+# FAQS
 
 **What format should my private key be in?** 
 
@@ -48,7 +53,7 @@ Modify the UNIT_BUDGET and UNIT_PRICE in the config.py.
 
 No. 
 
-### Example
+# Example
 
 ```
 from pump_fun import buy
