@@ -199,7 +199,7 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
         print("Sending transaction...")
         txn_sig = client.send_transaction(
             txn=VersionedTransaction(compiled_message, [payer_keypair]),
-            opts=TxOpts(skip_preflight=False)
+            opts=TxOpts(skip_preflight=True)
         ).value
         print(f"Transaction Signature: {txn_sig}")
 
