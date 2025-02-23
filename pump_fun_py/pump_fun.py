@@ -145,6 +145,7 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
         print("Calculating transaction amounts...")
         sol_dec = 1e9
         token_dec = 1e6
+        token_balance = token_balance * (percentage / 100)
         amount = int(token_balance * token_dec)
         
         virtual_sol_reserves = coin_data.virtual_sol_reserves / sol_dec
