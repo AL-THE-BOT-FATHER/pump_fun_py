@@ -26,7 +26,7 @@ def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
             return False
 
         if coin_data.complete:
-            print("Warning: This token has bonded and is only tradable on Raydium.")
+            print("Warning: This token has bonded and is only tradable on PumpSwap.")
             return
 
         MINT = coin_data.mint
@@ -126,7 +126,7 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
             return False
 
         if coin_data.complete:
-            print("Warning: This token has bonded and is only tradable on Raydium.")
+            print("Warning: This token has bonded and is only tradable on PumpSwap.")
             return
 
         MINT = coin_data.mint
