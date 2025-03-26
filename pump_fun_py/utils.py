@@ -7,9 +7,8 @@ from solders.pubkey import Pubkey  # type: ignore
 from config import client
 from coin_data import get_coin_data
 
-def get_token_balance(pub_key: Pubkey, mint_str: str) -> float | None:
+def get_token_balance(pub_key: Pubkey, mint: Pubkey) -> float | None:
     try:
-        mint = Pubkey.from_string(mint_str)
         response = client.get_token_accounts_by_owner_json_parsed(
             pub_key,
             TokenAccountOpts(mint=mint),
