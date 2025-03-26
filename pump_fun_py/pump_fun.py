@@ -1,4 +1,5 @@
 import struct
+from solana.rpc.commitment import Processed
 from solana.rpc.types import TokenAccountOpts, TxOpts
 from spl.token.instructions import (
     CloseAccountParams,
@@ -27,7 +28,7 @@ def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
 
         if coin_data.complete:
             print("Warning: This token has bonded and is only tradable on PumpSwap.")
-            return
+            return False
 
         MINT = coin_data.mint
         BONDING_CURVE = coin_data.bonding_curve
@@ -35,11 +36,14 @@ def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
         USER = payer_keypair.pubkey()
 
         print("Fetching or creating associated token account...")
-        try:
-            ASSOCIATED_USER = client.get_token_accounts_by_owner(USER, TokenAccountOpts(MINT)).value[0].pubkey
+        
+        token_account_check = client.get_token_accounts_by_owner(payer_keypair.pubkey(), TokenAccountOpts(MINT), Processed)
+        
+        if token_account_check.value:
+            ASSOCIATED_USER = token_account_check.value[0].pubkey
             token_account_instruction = None
-            print(f"Token account found: {ASSOCIATED_USER}")
-        except:
+            print("Existing token account found.")
+        else:
             ASSOCIATED_USER = get_associated_token_address(USER, MINT)
             token_account_instruction = create_associated_token_account(USER, USER, MINT)
             print(f"Creating token account : {ASSOCIATED_USER}")
@@ -54,7 +58,7 @@ def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
         
         slippage_adjustment = 1 + (slippage / 100)
         max_sol_cost = int((sol_in * slippage_adjustment) * sol_dec)
-        print(f"Amount: {amount}, Max Sol Cost: {max_sol_cost}")
+        print(f"Amount: {amount} | Max Sol Cost: {max_sol_cost}")
 
         print("Creating swap instructions...")
         keys = [
@@ -82,6 +86,7 @@ def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
             set_compute_unit_limit(UNIT_BUDGET),
             set_compute_unit_price(UNIT_PRICE),
         ]
+        
         if token_account_instruction:
             instructions.append(token_account_instruction)
         instructions.append(swap_instruction)
@@ -127,7 +132,7 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
 
         if coin_data.complete:
             print("Warning: This token has bonded and is only tradable on PumpSwap.")
-            return
+            return False
 
         MINT = coin_data.mint
         BONDING_CURVE = coin_data.bonding_curve
@@ -136,7 +141,7 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
         ASSOCIATED_USER = get_associated_token_address(USER, MINT)
 
         print("Retrieving token balance...")
-        token_balance = get_token_balance(payer_keypair.pubkey(), mint_str)
+        token_balance = get_token_balance(payer_keypair.pubkey(), MINT)
         if token_balance == 0 or token_balance is None:
             print("Token balance is zero. Nothing to sell.")
             return False
@@ -154,7 +159,7 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
         
         slippage_adjustment = 1 - (slippage / 100)
         min_sol_output = int((sol_out * slippage_adjustment) * sol_dec)
-        print(f"Amount: {amount}, Minimum Sol Out: {min_sol_output}")
+        print(f"Amount: {amount} | Minimum Sol Out: {min_sol_output}")
 
         print("Creating swap instructions...")
         keys = [
