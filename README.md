@@ -71,7 +71,7 @@ My services are for **hire**. Contact me if you need help integrating the code i
 - Vanity Address Generator
 - Rust implementations of PF code
 
-# FAQS
+# FAQ
 
 **What format should my private key be in?**
 
