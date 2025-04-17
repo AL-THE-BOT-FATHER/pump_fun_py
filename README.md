@@ -59,9 +59,7 @@ python pump_fun.py --action <action> --mint <mint> [--sol <sol>] [--percentage <
 
 - Ensure your token has not completed bonding (`coin_data.complete == False`), or trades will fail.
 - Check your wallet balance before running commands (output will show `Wallet balance`).
-- If transactions fail, verify your RPC endpoint, increase `UNIT_BUDGET`/`UNIT_PRICE` in `config.py`, or check the transaction signature on Solana Explorer (e.g., solscan.io).
-
-**If you can - please support my work and donate to: 3pPK76GL5ChVFBHND54UfBMtg36Bsh1mzbQPTbcK89PD**
+- If transactions fail, verify your RPC endpoint, increase `UNIT_BUDGET`/`UNIT_PRICE` in `.env.example`, or check the transaction signature on Solana Explorer (e.g., solscan.io).
 
 # Contact
 
@@ -72,10 +70,6 @@ My services are for **hire**. Contact me if you need help integrating the code i
 - gRPC Detection (Mints, Buys, Migrations)
 - Vanity Address Generator
 - Rust implementations of PF code
-
-I am not your personal tech support. READ THE FAQS BEFORE CONTACTING ME.
-
-Telegram: @AL_THE_BOT_FATHER
 
 # FAQS
 
@@ -89,30 +83,9 @@ You get what you pay for. Don't use the main-net RPC, just spend the money for H
 
 **How do I change the fee?**
 
-Modify the `UNIT_BUDGET` and `UNIT_PRICE` in the `config.py`.
+Modify the `UNIT_BUDGET` and `UNIT_PRICE` in the `.env.example`.
 
 **Does this code work on devnet?**
 
 No.
 
-# Example
-
-```python
-from pump_fun import buy
-
-# Buy Example
-mint_str = "pump_token_address"
-sol_in = .1
-slippage = 5
-buy(mint_str, sol_in, slippage)
-```
-
-```python
-from pump_fun import sell
-
-# Sell Example
-mint_str = "pump_token_address"
-percentage = 100
-slippage = 5
-sell(mint_str, percentage, slippage)
-```
