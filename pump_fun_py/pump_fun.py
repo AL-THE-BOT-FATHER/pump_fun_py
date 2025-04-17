@@ -2,20 +2,37 @@ import struct
 import argparse
 from solana.rpc.commitment import Processed
 from solana.rpc.types import TokenAccountOpts, TxOpts
-from spl.token.instructions import (
-    CloseAccountParams,
-    close_account,
-    create_associated_token_account,
-    get_associated_token_address,
-)
+from spl.token.instructions import create_associated_token_account, get_associated_token_address
 from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price
 from solders.instruction import Instruction, AccountMeta
 from solders.message import MessageV0
 from solders.transaction import VersionedTransaction
-from config import client, payer_keypair, UNIT_BUDGET, UNIT_PRICE
+from solana.rpc.api import Client
+from solders.keypair import Keypair
+from dotenv import load_dotenv
+import os
 from constants import *
 from utils import confirm_txn, get_token_balance
 from coin_data import get_coin_data, sol_for_tokens, tokens_for_sol
+
+# Завантажуємо .env
+load_dotenv()
+
+# Конфігурація
+PRIV_KEY = os.getenv("PRIV_KEY")
+RPC = os.getenv("RPC")
+UNIT_BUDGET = os.getenv("UNIT_BUDGET")
+UNIT_PRICE = os.getenv("UNIT_PRICE")
+
+# Перевірка наявності змінних
+if not all([PRIV_KEY, RPC, UNIT_BUDGET, UNIT_PRICE]):
+    raise ValueError("Missing required environment variables in .env")
+
+# Ініціалізація
+client = Client(RPC)
+payer_keypair = Keypair.from_base58_string(PRIV_KEY)
+UNIT_BUDGET = int(UNIT_BUDGET)
+UNIT_PRICE = int(UNIT_PRICE)
 
 def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
     print(f"Calling buy with mint: {mint_str}, sol_in: {sol_in}, slippage: {slippage}")
@@ -193,11 +210,6 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
             set_compute_unit_price(UNIT_PRICE),
             swap_instruction,
         ]
-
-        if percentage == 100:
-            print("Preparing to close token account after swap...")
-            close_account_instruction = close_account(CloseAccountParams(TOKEN_PROGRAM, ASSOCIATED_USER, USER, USER))
-            instructions.append(close_account_instruction)
 
         print("Compiling transaction message...")
         compiled_message = MessageV0.try_compile(

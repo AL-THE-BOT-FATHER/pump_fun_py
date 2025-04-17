@@ -4,7 +4,8 @@ from solana.rpc.commitment import Processed, Confirmed
 from solana.rpc.types import TokenAccountOpts
 from solders.signature import Signature # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
-from config import client
+from dotenv import load_dotenv
+import os
 from coin_data import get_coin_data
 
 def get_token_balance(pub_key: Pubkey, mint: Pubkey) -> float | None:
