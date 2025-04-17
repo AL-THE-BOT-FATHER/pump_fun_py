@@ -1,4 +1,5 @@
 import struct
+import argparse
 from solana.rpc.commitment import Processed
 from solana.rpc.types import TokenAccountOpts, TxOpts
 from spl.token.instructions import (
@@ -7,20 +8,21 @@ from spl.token.instructions import (
     create_associated_token_account,
     get_associated_token_address,
 )
-from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price  # type: ignore
-from solders.instruction import Instruction, AccountMeta  # type: ignore
-from solders.message import MessageV0  # type: ignore
-from solders.transaction import VersionedTransaction  # type: ignore
+from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price
+from solders.instruction import Instruction, AccountMeta
+from solders.message import MessageV0
+from solders.transaction import VersionedTransaction
 from config import client, payer_keypair, UNIT_BUDGET, UNIT_PRICE
 from constants import *
 from utils import confirm_txn, get_token_balance
 from coin_data import get_coin_data, sol_for_tokens, tokens_for_sol
 
 def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
+    print(f"Calling buy with mint: {mint_str}, sol_in: {sol_in}, slippage: {slippage}")
     try:
         print(f"Starting buy transaction for mint: {mint_str}")
-
         coin_data = get_coin_data(mint_str)
+        print(f"Coin data: {coin_data}")
         
         if not coin_data:
             print("Failed to retrieve coin data.")
@@ -114,9 +116,12 @@ def buy(mint_str: str, sol_in: float = 0.01, slippage: int = 5) -> bool:
 
     except Exception as e:
         print(f"Error occurred during transaction: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
+    print(f"Calling sell with mint: {mint_str}, percentage: {percentage}, slippage: {slippage}")
     try:
         print(f"Starting sell transaction for mint: {mint_str}")
 
@@ -217,4 +222,29 @@ def sell(mint_str: str, percentage: int = 100, slippage: int = 5) -> bool:
 
     except Exception as e:
         print(f"Error occurred during transaction: {e}")
+        import traceback
+        traceback.print_exc()
         return False
+
+if __name__ == "__main__":
+    # Налаштування аргументів командного рядка
+    parser = argparse.ArgumentParser(description="Run buy or sell function for PumpFun")
+    parser.add_argument("--action", choices=["buy", "sell"], required=True, help="Action to perform: buy or sell")
+    parser.add_argument("--mint", type=str, required=True, help="Mint address of the token")
+    parser.add_argument("--sol", type=float, default=0.1, help="Amount of SOL to spend (for buy)")
+    parser.add_argument("--percentage", type=int, default=100, help="Percentage of tokens to sell (for sell)")
+    parser.add_argument("--slippage", type=int, default=5, help="Slippage percentage")
+
+    args = parser.parse_args()
+
+    # Перевірка балансу гаманця
+    balance = client.get_balance(payer_keypair.pubkey()).value
+    print(f"Wallet balance: {balance / 1e9} SOL")
+
+    # Виклик відповідної функції залежно від дії
+    if args.action == "buy":
+        result = buy(args.mint, args.sol, args.slippage)
+        print(f"Buy transaction result: {result}")
+    elif args.action == "sell":
+        result = sell(args.mint, args.percentage, args.slippage)
+        print(f"Sell transaction result: {result}")
