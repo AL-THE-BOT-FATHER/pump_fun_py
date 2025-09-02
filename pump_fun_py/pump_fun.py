@@ -17,7 +17,7 @@ from spl.token.instructions import (
     get_associated_token_address,
 )
 
-from bonding_curve import get_bonding_curve, sol_for_tokens, tokens_for_sol
+from bonding_curve import derive_fee_config, get_bonding_curve, sol_for_tokens, tokens_for_sol
 from constants import *
 from utils import confirm_txn, get_token_balance
 
@@ -42,6 +42,7 @@ def buy(client: Client, payer_keypair: Keypair, mint_str: str, sol_in: float = 0
         creator = bonding_curve_data.creator
         creator_vault = Pubkey.find_program_address([b'creator-vault', bytes(creator)], PUMP_FUN_PROGRAM)[0]
         user_volume_accumulator = Pubkey.find_program_address([b"user_volume_accumulator", bytes(user)], PUMP_FUN_PROGRAM)[0]
+        fee_config = derive_fee_config()
                 
         print("Fetching or creating associated token account...")
         
@@ -83,7 +84,9 @@ def buy(client: Client, payer_keypair: Keypair, mint_str: str, sol_in: float = 0
             AccountMeta(pubkey=EVENT_AUTHORITY, is_signer=False, is_writable=False),
             AccountMeta(pubkey=PUMP_FUN_PROGRAM, is_signer=False, is_writable=False),
             AccountMeta(pubkey=GLOBAL_VOL_ACC, is_signer=False, is_writable=True),
-            AccountMeta(pubkey=user_volume_accumulator, is_signer=False, is_writable=True)
+            AccountMeta(pubkey=user_volume_accumulator, is_signer=False, is_writable=True),
+            AccountMeta(pubkey=fee_config, is_signer=False, is_writable=False),
+            AccountMeta(pubkey=FEE_PROGRAM, is_signer=False, is_writable=False),
         ]
 
         data = bytearray()
@@ -150,6 +153,7 @@ def sell(client: Client, payer_keypair: Keypair, mint_str: str, percentage: int 
         associated_user = get_associated_token_address(user, mint)
         creator = bonding_curve_data.creator
         creator_vault = Pubkey.find_program_address([b'creator-vault', bytes(creator)], PUMP_FUN_PROGRAM)[0]
+        fee_config = derive_fee_config()
 
         print("Retrieving token balance...")
         token_balance = get_token_balance(client, payer_keypair.pubkey(), mint)
@@ -185,7 +189,9 @@ def sell(client: Client, payer_keypair: Keypair, mint_str: str, percentage: int 
             AccountMeta(pubkey=creator_vault, is_signer=False, is_writable=True),
             AccountMeta(pubkey=TOKEN_PROGRAM, is_signer=False, is_writable=False),
             AccountMeta(pubkey=EVENT_AUTHORITY, is_signer=False, is_writable=False),
-            AccountMeta(pubkey=PUMP_FUN_PROGRAM, is_signer=False, is_writable=False)
+            AccountMeta(pubkey=PUMP_FUN_PROGRAM, is_signer=False, is_writable=False),
+            AccountMeta(pubkey=fee_config, is_signer=False, is_writable=False),
+            AccountMeta(pubkey=FEE_PROGRAM, is_signer=False, is_writable=False),
         ]
 
         data = bytearray()

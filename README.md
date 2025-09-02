@@ -6,7 +6,11 @@ Python library to trade on pump.fun.
 pip install solana==0.36.1 solders==0.23.0
 ```
 
-Updated: 8/2/2025
+Last Updated: 9/2/2025
+
+Pump program (6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P):
+- Buy instruction: Add accounts at indexes 14 (fee_config) and 15 (fee_program)
+- Sell instruction: Add accounts at indexes 12 (fee_config) and 13 (fee_program)
 
 # Contact
 

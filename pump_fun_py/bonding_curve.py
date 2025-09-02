@@ -6,7 +6,7 @@ from solana.rpc.api import Client
 from solders.pubkey import Pubkey  # type: ignore
 from spl.token.instructions import get_associated_token_address
 
-from constants import PUMP_FUN_PROGRAM
+from constants import FEE_PROGRAM, PUMP_FUN_PROGRAM
 
 @dataclass
 class BondingCurve:
@@ -73,6 +73,16 @@ def get_bonding_curve(client: Client, mint_str: str) -> Optional[BondingCurve]:
         )
     except Exception as e:
         print(e)
+        return None
+
+def derive_fee_config():
+    try:
+        fee_config, _ = Pubkey.find_program_address(
+            ["fee_config".encode(), bytes(PUMP_FUN_PROGRAM)],
+            FEE_PROGRAM
+        )
+        return fee_config
+    except Exception:
         return None
 
 def sol_for_tokens(sol_spent, sol_reserves, token_reserves):
