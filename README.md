@@ -54,7 +54,7 @@ rpc = "rpc_url_here"
 mint_str = "pump_token_address"
 sol_in = 0.1
 slippage = 5
-unit_budget = 100_000
+unit_budget = 120_000
 unit_price = 1_000_000
 
 # Initialize client and keypair
@@ -77,7 +77,7 @@ rpc = "rpc_url_here"
 mint_str = "pump_token_address"
 percentage = 100
 slippage = 5
-unit_budget = 100_000
+unit_budget = 120_000
 unit_price = 1_000_000
 
 # Initialize client and keypair
