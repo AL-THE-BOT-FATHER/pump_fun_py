@@ -6,7 +6,7 @@ Python library to trade on pump.fun.
 pip install solana==0.36.1 solders==0.23.0
 ```
 
-Updated: 8/2/2025
+Updated: 9/3/2025
 
 # Contact
 
